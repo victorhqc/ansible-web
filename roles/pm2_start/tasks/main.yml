@@ -1,0 +1,3 @@
+---
+- name: Start PM2 instance
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && pm2 start --name {{ domain }} npm -- start
