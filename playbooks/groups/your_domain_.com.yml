@@ -1,0 +1,15 @@
+---
+- hosts: <your_host>
+  user: ansible
+  environment:
+    NVM_DIR: "/home/ansible/.nvm"
+  vars:
+    node_version: stable
+    git_repository: https://<your_public_repo>.git
+    git_version: HEAD
+    domain: <your_domain.com>
+    website_port: 3000
+    user: ansible
+  roles:
+  - clone_repo
+  - pm2_restart
