@@ -1,0 +1,66 @@
+---
+- name: Install dependencies
+  become: true
+  apt: pkg={{ item }} update_cache=yes cache_valid_time=3600
+  with_items:
+    - git
+    - curl
+    - build-essential
+    - libssl-dev
+
+- name: Download nvm
+  become: true
+  get_url:
+    url: https://raw.githubusercontent.com/creationix/nvm/{{ nvm_version }}/install.sh
+    dest: /home/{{ user }}/nvm-installer.sh
+
+- name: Change ownership to installer
+  become: true
+  file:
+    mode: 0775
+    path: /home/{{ user }}/nvm-installer.sh
+    owner: '{{ user }}'
+    group: '{{ user }}'
+
+- name: Install nvm
+  shell: ~/nvm-installer.sh
+  ignore_errors: true
+  args:
+    executable: /bin/bash
+
+- name: Source nvm.sh
+  shell: source ~/.nvm/nvm.sh
+  args:
+    executable: /bin/bash
+
+- name: Add nvm in ~/.profile
+  lineinfile:
+    dest: ~/.profile
+    create: yes
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  with_items:
+    - { regexp: '^export NVM_DIR\=', line: 'export NVM_DIR="$HOME/.nvm"' }
+    - { regexp: '^\[\ -s\ \"\$NVM_DIR', line: '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' }
+
+- name: Source ~/.profile
+  shell: source ~/.profile
+  args:
+    executable: /bin/bash
+
+- name: Install Node {{ node_version }}
+  become: false
+  shell: . $NVM_DIR/nvm.sh && nvm install {{ node_version }}
+  register: nvm_install_result
+  args:
+    executable: /bin/bash
+
+- name: Check if {{ node_version }} is the default node version
+  shell: . $NVM_DIR/nvm.sh && nvm ls | grep -e 'default -> {{ node_version }}'
+  register: nvm_check_default
+  changed_when: false
+  ignore_errors: true
+
+- name: Set default node version to {{ node_version }}
+  shell: . $NVM_DIR/nvm.sh && nvm alias default {{ node_version }}
+  when: nvm_check_default|failed
