@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  vars:
+    domain: <your_domain.com>
+  roles:
+  - create_ssh_key
+- hosts: <your_host>
+  remote_user: <your_already_existing_root_user>
+  vars:
+    domain: <your_domain.com>
+  roles:
+  - create_ansible_user
