@@ -1,0 +1,7 @@
+---
+- name: Generate SSH key
+  shell: ssh-keygen -b 2048 -t rsa -f ~/.ssh/{{domain}} -q -N ""
+  args:
+    creates: ~/.ssh/{{ domain }}
+- name: Register ssh key in ssh-agent
+  command: ssh-add -K ~/.ssh/{{domain}}
