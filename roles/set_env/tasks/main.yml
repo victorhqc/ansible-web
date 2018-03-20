@@ -1,0 +1,8 @@
+---
+- name: Set env file
+  template:
+    src: templates/env
+    dest: ~/{{ domain }}/.env
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0755
