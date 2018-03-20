@@ -1,0 +1,29 @@
+---
+- name: Ensure ansible user exists
+  become: true
+  user:
+    name: ansible
+    groups: admin
+    append: yes
+    state: present
+    comment: Ansible
+- name: Read key content
+  delegate_to: localhost
+  command: cat {{ item }}
+  register: keys
+  with_fileglob:
+    - "~/.ssh/{{ domain }}.pub"
+- name: Ensure ansible user accepts ssh key
+  become: true
+  authorized_key:
+    user: ansible
+    key: "{{item.stdout}}"
+  with_items: "{{keys.results}}"
+- name: Ensure the ansible user is a sudoer with no password required
+  become: true
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^ansible ALL\='
+    line: 'ansible ALL=(ALL) NOPASSWD:ALL'
+    validate: 'visudo -cf %s'
