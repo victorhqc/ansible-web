@@ -1,0 +1,32 @@
+---
+- name: Add certbot repository
+  become: true
+  apt_repository:
+    repo: 'ppa:certbot/certbot'
+
+- name: Download dependencies
+  become: true
+  apt:
+    update_cache: true
+    name:
+      - nginx
+      - python
+      - python-certbot-nginx
+
+- name: Configure domain (server block)
+  become: true
+  template:
+    src: templates/domain
+    dest: /etc/nginx/sites-available/{{ domain }}
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Enable domain (server block)
+  become: true
+  file:
+    src: /etc/nginx/sites-available/{{ domain }}
+    dest: /etc/nginx/sites-enabled/{{ domain }}
+    owner: root
+    group: root
+    state: link
