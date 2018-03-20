@@ -1,0 +1,3 @@
+---
+- name: Install node dependencies
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && npm i yarn pm2 -g
