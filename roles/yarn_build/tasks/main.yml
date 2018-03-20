@@ -1,0 +1,3 @@
+---
+- name: Build project
+  shell: . $NVM_DIR/nvm.sh && nvm use {{ node_version }} && cd ~/{{ domain }} && yarn build
