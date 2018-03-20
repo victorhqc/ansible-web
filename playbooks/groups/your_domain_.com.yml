@@ -12,4 +12,7 @@
     user: ansible
   roles:
   - clone_repo
+  - set_env
+  - yarn_install
+  - yarn_build
   - pm2_restart

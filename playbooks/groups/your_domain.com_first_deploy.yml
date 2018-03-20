@@ -14,7 +14,7 @@
     user: ansible
   roles:
   - nginx_setup
-  - nvm_install
   - clone_repo
-  - npm_globals
+  - set_env
   - yarn_install
+  - pm2_start

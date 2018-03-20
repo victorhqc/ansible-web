@@ -10,3 +10,5 @@
     domain: <your_domain.com>
   roles:
   - create_ansible_user
+  - nvm_install
+  - npm_globals
